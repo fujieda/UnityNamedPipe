@@ -86,6 +86,10 @@ namespace Assets.Scripts
             {
                 Debug.Log(e.Message);
             }
+            finally
+            {
+                _pipe?.Close();
+            }
         }
     }
 }
