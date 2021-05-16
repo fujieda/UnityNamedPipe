@@ -50,7 +50,7 @@ namespace Assets.Scripts
             await IPC.Send("Invalid command: " + tokens[0]);
         }
 
-        private void OnApplicationQuit()
+        private void OnDisable()
         {
             IPC.Close();
         }

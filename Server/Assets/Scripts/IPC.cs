@@ -69,6 +69,8 @@ namespace Assets.Scripts
 
         public static void Close()
         {
+            if (_pipe != null && _pipe.IsConnected)
+                return;
             _cancelled = true;
             try
             {
