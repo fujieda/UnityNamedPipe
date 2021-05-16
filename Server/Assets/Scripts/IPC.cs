@@ -10,28 +10,25 @@ namespace Assets.Scripts
     public static class IPC
     {
         private static NamedPipeServerStream _pipe;
-        private static bool _running;
+        private static bool _cancelled;
         private static Func<string, UniTask> _handler;
         public static string PipeName { private get; set; } = "UnityNamedPipe";
 
         public static void Run(Func<string, UniTask> handler)
         {
             _handler = handler;
-            if (!_running)
-                Loop().Forget();
+            Loop().Forget();
         }
 
         private static async UniTaskVoid Loop()
         {
-            while (true)
+            while (!_cancelled)
             {
                 var message = await Receive();
                 if (message == "")
                     break;
                 await _handler(message);
-                await UniTask.WaitForEndOfFrame();
             }
-            _running = false;
         }
 
         public static async UniTask Send(string json)
@@ -72,6 +69,7 @@ namespace Assets.Scripts
 
         public static void Close()
         {
+            _cancelled = true;
             try
             {
                 var pipe = new NamedPipeClientStream(PipeName);
